@@ -1,13 +1,20 @@
 package elec0.simplypowers;
 
+import elec0.simplypowers.capabilities.CapabilityHandler;
+import elec0.simplypowers.capabilities.IPowerData;
+import elec0.simplypowers.capabilities.PowerData;
+import elec0.simplypowers.capabilities.PowerDataStorage;
+import elec0.simplypowers.commands.PowerListCommand;
 import elec0.simplypowers.items.ModItems;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 @Mod(modid = SimplyPowers.MODID, name = SimplyPowers.MODNAME, version =  SimplyPowers.MODVERSION, dependencies = "required-after:forge@[13.19.1.2197,)", useMetadata = true)
 public class SimplyPowers 
@@ -42,6 +49,11 @@ public class SimplyPowers
 		proxy.postInit(event);
 	}
 	
+	@Mod.EventHandler
+    public void serverLoad(FMLServerStartingEvent event) 
+	{
+        event.registerServerCommand(new PowerListCommand());
+    }
 	
 	public static class CommonProxy
 	{
@@ -55,7 +67,8 @@ public class SimplyPowers
 		 public void init(FMLInitializationEvent e) 
 		 {	
 			 MinecraftForge.EVENT_BUS.register(new EventHandlerCommon());
-			 System.out.println("Event registered.");
+			 MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
+			 CapabilityManager.INSTANCE.register(IPowerData.class, new PowerDataStorage(), PowerData.class);
 			 
 		 }
 
