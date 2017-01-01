@@ -48,35 +48,13 @@ public class EventHandlerCommon
 	@SubscribeEvent
 	public void onPlayerClone(PlayerEvent.Clone event)
 	{
-		boolean wasDead = event.isWasDeath();
-		if(wasDead == true) // Don't copy data when returning from the End
+		if(event.isWasDeath() == true) // Don't copy data when returning from the End
 			PowerData.copyPowerData(event.getOriginal(), event.getEntityPlayer());
 	}
 	
 	@SubscribeEvent
 	public void onEntityJoin(EntityJoinWorldEvent event)
 	{
-		// Should use a capability for the loading of the power variables
-		// Tutorial: http://www.planetminecraft.com/blog/forge-tutorial-capability-system/
-		
-		/*if(event.getEntity() instanceof EntityPlayer)
-		{
-			EntityPlayer player = (EntityPlayer)event.getEntity();
-			World world = event.getWorld();
-			
-			if(!world.isRemote)
-			{				
-				System.out.println("\tPlayer Joined");
-				NBTTagCompound tag = player.getEntityData();
-				
-				NBTBase modeTag = tag.getTag("testSave");
-				
-				if(modeTag != null)
-				{
-					player.addChatComponentMessage(new TextComponentString("Tag exists. Value: " + tag.getInteger("testSave")), false);
-				}
-				tag.setInteger("testSave", 150);
-			}
-		}*/
+
 	}
 }

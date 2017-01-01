@@ -17,12 +17,14 @@ public class PowerData implements IPowerData
 	}
 	
 	@Override
-	public int getPowerLevel() {
+	public int getPowerLevel() 
+	{
 		return powerLevel;
 	}
 
 	@Override
-	public void setPowerLevel(int level) {
+	public void setPowerLevel(int level)
+	{
 		powerLevel = level;
 	}
 
