@@ -20,4 +20,7 @@ public interface IPowerData
 	public IPower[] getPowers();
 	public int[] getPowerIDs();
 	public int[] getLevels();
+	
+	public void genObjects();
+	public void generatePowers();
 }

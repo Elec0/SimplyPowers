@@ -23,11 +23,16 @@ public class PowerDataStorage implements IStorage<IPowerData>
 	@Override
 	public void readNBT(Capability<IPowerData> capability, IPowerData instance, EnumFacing side, NBTBase nbt) 
 	{
-		NBTTagCompound tag = (NBTTagCompound)nbt;
-		
-		instance.setTypes(tag.getIntArray("types"));
-		instance.setLevels(tag.getIntArray("levels"));
-		instance.setPowerIDs(tag.getIntArray("ids"));
+		if(nbt instanceof NBTTagCompound)
+		{
+			NBTTagCompound tag = (NBTTagCompound)nbt;
+			
+			instance.setTypes(tag.getIntArray("types"));
+			instance.setLevels(tag.getIntArray("levels"));
+			instance.setPowerIDs(tag.getIntArray("ids"));
+			
+			instance.genObjects();
+		}
 	}
 	
 }

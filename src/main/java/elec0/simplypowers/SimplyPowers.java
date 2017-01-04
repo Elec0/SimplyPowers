@@ -4,7 +4,7 @@ import elec0.simplypowers.capabilities.CapabilityHandler;
 import elec0.simplypowers.capabilities.IPowerData;
 import elec0.simplypowers.capabilities.PowerData;
 import elec0.simplypowers.capabilities.PowerDataStorage;
-import elec0.simplypowers.commands.PowerListCommand;
+import elec0.simplypowers.commands.SimplyPowersCommand;
 import elec0.simplypowers.items.ModItems;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -52,7 +52,7 @@ public class SimplyPowers
 	@Mod.EventHandler
     public void serverLoad(FMLServerStartingEvent event) 
 	{
-        event.registerServerCommand(new PowerListCommand());
+        event.registerServerCommand(new SimplyPowersCommand());
     }
 	
 	public static class CommonProxy

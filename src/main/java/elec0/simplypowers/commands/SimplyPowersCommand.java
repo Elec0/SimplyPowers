@@ -16,11 +16,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 
-public class PowerListCommand extends CommandBase
+public class SimplyPowersCommand extends CommandBase
 {
-	public PowerListCommand()
+	public SimplyPowersCommand()
 	{
-		aliases = Lists.newArrayList(SimplyPowers.MODID, "POWERLIST", "powerlist");
+		aliases = Lists.newArrayList(SimplyPowers.MODID, "SIMPLYPOWERS", "SIMPLYPOWERS");
 	}
 	
 	private final List<String> aliases;
@@ -29,12 +29,12 @@ public class PowerListCommand extends CommandBase
 	@Nonnull
 	public String getCommandName()
 	{
-		return "powerlist";
+		return "simplypowers";
 	}
 
 	@Override
 	public String getCommandUsage(ICommandSender sender) {
-		return "/powerlist";
+		return "/simplypowers [list, regen]";
 	}
 	@Override
     @Nonnull
@@ -47,9 +47,18 @@ public class PowerListCommand extends CommandBase
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
 	{
 		if(sender instanceof EntityPlayer)
-		{
+		{				
 			IPowerData powerData = ((EntityPlayer) sender).getCapability(PowerDataProvider.POWER_CAP, null);
-			sender.addChatMessage(new TextComponentString("Your power levels are " + powerData.getLevels()[0] + ", " + powerData.getLevels()[1]));
+			if(args[0].equalsIgnoreCase("list"))
+			{
+				sender.addChatMessage(new TextComponentString("Power debug: " + powerData.toString()));
+			}
+			else if(args[0].equalsIgnoreCase("regen"))
+			{
+				powerData.generatePowers();
+				sender.addChatMessage(new TextComponentString("Power regenerated."));
+				sender.addChatMessage(new TextComponentString("Power debug: " + powerData.toString()));
+			}
 		}
 	}
 	

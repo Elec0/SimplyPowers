@@ -14,22 +14,23 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 public class EventHandlerCommon 
-{
-	@SubscribeEvent
-	public void onArrowNocked(ArrowNockEvent event)
-	{
-		System.out.println("Arrow nocked!");
-	}
-	
+{	
 	@SubscribeEvent
 	public void onLivingJumpEvent(LivingJumpEvent event)
 	{
-		if (event.getEntity() != null && event.getEntity() instanceof EntityPlayer)
+		if (event.getEntity() != null && event.getEntity() instanceof EntityPlayer && !event.getEntity().worldObj.isRemote)
 		{
 			IPowerData powerData = event.getEntity().getCapability(PowerDataProvider.POWER_CAP, null);
 			IPower[] powers = powerData.getPowers();
-			powers[0].entityJump(event);
-			powers[1].entityJump(event);
+			if(powers[0] != null && powers[1] != null)
+			{
+				powers[0].entityJump(event);
+				powers[1].entityJump(event);
+			}
+			else
+			{
+				System.out.println("Err: Powers 0 or 1 are null. This shouldn't happen.");
+			}
 			
 			/*double addY = 1.0D; // whatever value you want
 			// player.setVelocity(player.motionX, player.motionY + addY, player.motionZ);
@@ -47,7 +48,7 @@ public class EventHandlerCommon
 		if(player.worldObj.isRemote) // Only server, apparently
 			return;
 		IPowerData powerData = player.getCapability(PowerDataProvider.POWER_CAP, null);
-		player.addChatMessage(new TextComponentString("Your power levels are " + powerData.getLevels()[0] + ", " + powerData.getLevels()[1]));
+		player.addChatMessage(new TextComponentString("Power debug: " + powerData.toString()));
 	
 	}
 	

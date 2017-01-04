@@ -5,7 +5,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 
 public class Powers 
 {
-	public static final int NUM_TYPES = 11; // 12 with tinkers
+	public static final int NUM_TYPES = 1; // 11 for real. 12 with tinkers
 	public static final int NUM_MIN_GEN_POWER = 20; // Minimum strength a power can be at generation
 	public static final int NUM_MAX_GEN_POWER = 80; // Maximum strength a power can be at generation
 	public static final int NUM_MAX_POWER = 100; // Absolute maximum power strength
@@ -68,8 +68,9 @@ public class Powers
 			switch(ID)
 			{
 			case 0:
-				event.getEntity().motionY += 1 * (double)(level/100);
+				event.getEntity().motionY += 1;
 				event.getEntity().velocityChanged = true;
+				System.out.println("entityJump called.");
 				break;
 			}
 		}
@@ -88,6 +89,10 @@ public class Powers
 		public int getLevel() 
 		{return level;}
 		
+		public String toString()
+		{
+			return "ID: " + ID + ", level: " + level;
+		}
 	}
 	
 }
