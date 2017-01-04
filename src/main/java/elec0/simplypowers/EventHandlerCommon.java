@@ -3,6 +3,7 @@ package elec0.simplypowers;
 import elec0.simplypowers.capabilities.IPowerData;
 import elec0.simplypowers.capabilities.PowerData;
 import elec0.simplypowers.capabilities.PowerDataProvider;
+import elec0.simplypowers.powers.IPower;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -25,11 +26,16 @@ public class EventHandlerCommon
 	{
 		if (event.getEntity() != null && event.getEntity() instanceof EntityPlayer)
 		{
-			double addY = 1.0D; // whatever value you want
+			IPowerData powerData = event.getEntity().getCapability(PowerDataProvider.POWER_CAP, null);
+			IPower[] powers = powerData.getPowers();
+			powers[0].entityJump(event);
+			powers[1].entityJump(event);
+			
+			/*double addY = 1.0D; // whatever value you want
 			// player.setVelocity(player.motionX, player.motionY + addY, player.motionZ);
 			// player.addVelocity(0.0D, addY, 0.0D);
 			event.getEntity().motionY += addY;
-			event.getEntity().velocityChanged = true;
+			event.getEntity().velocityChanged = true;*/
 		}
 	}
 	
@@ -41,7 +47,7 @@ public class EventHandlerCommon
 		if(player.worldObj.isRemote) // Only server, apparently
 			return;
 		IPowerData powerData = player.getCapability(PowerDataProvider.POWER_CAP, null);
-		player.addChatMessage(new TextComponentString("Your power level is " + powerData.getPowerLevel()));
+		player.addChatMessage(new TextComponentString("Your power levels are " + powerData.getLevels()[0] + ", " + powerData.getLevels()[1]));
 	
 	}
 	

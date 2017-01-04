@@ -49,7 +49,7 @@ public class PowerListCommand extends CommandBase
 		if(sender instanceof EntityPlayer)
 		{
 			IPowerData powerData = ((EntityPlayer) sender).getCapability(PowerDataProvider.POWER_CAP, null);
-			sender.addChatMessage(new TextComponentString("Your power level is " + powerData.getPowerLevel()));
+			sender.addChatMessage(new TextComponentString("Your power levels are " + powerData.getLevels()[0] + ", " + powerData.getLevels()[1]));
 		}
 	}
 	
