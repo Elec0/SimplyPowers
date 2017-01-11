@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
-import net.minecraftforge.event.entity.player.ArrowNockEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -37,6 +37,24 @@ public class EventHandlerCommon
 			// player.addVelocity(0.0D, addY, 0.0D);
 			event.getEntity().motionY += addY;
 			event.getEntity().velocityChanged = true;*/
+		}
+	}
+	
+	@SubscribeEvent
+	public void onEntityUpdate(LivingUpdateEvent event)
+	{
+		// Want to keep the number of times this actually runs down, since there are always a shitload of entities
+		if(event.getEntity() instanceof EntityPlayer)
+		{
+			if(event.getEntity() != null && !event.getEntity().worldObj.isRemote)
+			{
+				// Default walkspeed is 0.1
+				EntityPlayer player = (EntityPlayer)event.getEntity();
+				System.out.println(player.motionX + ", " + player.motionZ);
+				player.motionX *= 1.2f;
+				player.motionZ *= 1.2f;
+				player.velocityChanged = true;
+			}
 		}
 	}
 	

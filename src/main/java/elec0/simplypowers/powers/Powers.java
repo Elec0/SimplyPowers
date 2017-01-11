@@ -68,7 +68,7 @@ public class Powers
 			switch(ID)
 			{
 			case 0:
-				event.getEntity().motionY += 1;
+				event.getEntity().motionY *= 2;
 				event.getEntity().velocityChanged = true;
 				System.out.println("entityJump called.");
 				break;
