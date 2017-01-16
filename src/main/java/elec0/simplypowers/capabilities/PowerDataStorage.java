@@ -17,6 +17,8 @@ public class PowerDataStorage implements IStorage<IPowerData>
 		ret.setIntArray("types", instance.getTypes());
 		ret.setIntArray("levels", instance.getLevels());
 		ret.setIntArray("ids", instance.getPowerIDs());
+		ret.setIntArray("actives", instance.getActives());
+		
 		return ret;
 	}
 
@@ -30,6 +32,7 @@ public class PowerDataStorage implements IStorage<IPowerData>
 			instance.setTypes(tag.getIntArray("types"));
 			instance.setLevels(tag.getIntArray("levels"));
 			instance.setPowerIDs(tag.getIntArray("ids"));
+			instance.setActives(tag.getIntArray("actives"));
 			
 			instance.genObjects();
 		}

@@ -15,11 +15,15 @@ public interface IPowerData
 	// Power intensity/levels
 	public void setLevels(int primary, int secondary);
 	public void setLevels(int[] levels);
+	// Which powers are active
+	public void setActives(int primary, int secondary);
+	public void setActives(int[] actives);
 
 	public int[] getTypes();
 	public IPower[] getPowers();
 	public int[] getPowerIDs();
 	public int[] getLevels();
+	public int[] getActives();
 	
 	public void genObjects();
 	public void generatePowers();

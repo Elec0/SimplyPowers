@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class PowerData implements IPowerData
 {
-	private int[] types, levels, powerIDs;
+	private int[] types, levels, powerIDs, actives;
 	private IPower[] powers;
 	
 	public PowerData()
@@ -17,6 +17,7 @@ public class PowerData implements IPowerData
 		types = new int[2];
 		levels = new int[2];
 		powerIDs = new int[2];
+		actives = new int[2];
 		powers = new IPower[2];
 		generatePowers();
 	}
@@ -31,7 +32,9 @@ public class PowerData implements IPowerData
 		 * Levels: 20-100
 		 * 		Strength of power. rand(80) + 20
 		 * 		Min of 20, max of 100(?)
-		 * 
+		 * Actives: 0/1
+		 * 		If the power is activated or not. It might not be possible
+		 * 		to activate the power, in which case the value doesn't matter.
 		 */
 		
 		Random rand = new Random();
@@ -50,12 +53,21 @@ public class PowerData implements IPowerData
 	@Override
 	public void genObjects()
 	{
+		if(actives.length <= 0)
+		{
+			actives = new int[2];
+			actives[0] = 0;
+			actives[1] = 0;
+		}
+		
 		powers[0] = Powers.initPower(types[0]);
 		powers[0].setID(powerIDs[0]);
 		powers[0].setLevel(levels[0]);
+		powers[0].setActive(actives[0]);
 		powers[1] = Powers.initPower(types[1]);
 		powers[1].setID(powerIDs[1]);
 		powers[1].setLevel(levels[1]);
+		powers[1].setActive(actives[1]);
 	}
 	
 	@Override
@@ -106,6 +118,17 @@ public class PowerData implements IPowerData
 	public int[] getPowerIDs() 
 	{return powerIDs;}
 
+	@Override
+	public void setActives(int primary, int secondary)
+	{actives = new int[]{primary, secondary};}
+	
+	@Override
+	public void setActives(int[] actives)
+	{this.actives = actives;}
+	
+	@Override
+	public int[] getActives()
+	{return actives;}
 	
 	public String toString()
 	{
@@ -129,6 +152,9 @@ public class PowerData implements IPowerData
 		newData.setTypes(origData.getTypes());
 		newData.setPowers(origData.getPowers());
 		newData.setLevels(origData.getLevels());
+		newData.setActives(origData.getActives());
+		
+		newData.genObjects();
 	}
 
 }
