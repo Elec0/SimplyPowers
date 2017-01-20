@@ -55,9 +55,10 @@ public class Powers
 	public static class Mover implements IPower
 	{
 		// Total number of powers, or IDs, in this type
-		public static final int NUM_IDS = 1;
+		public static final int NUM_IDS = 2;
 		
 		public static final int POWER_0_PROGRESSION = 100;
+		public static final int POWER_1_PROGRESSION = 10;
 		
 		// Non-static fields		
 		private int ID;
@@ -86,12 +87,14 @@ public class Powers
 		{
 			switch(getID())
 			{
-			case 0:
-				int maxJump = 2; // Multiple of default jump distance
-				event.getEntity().motionY *= 1 + (maxJump * (level / 100));
+			case 1:
+				// Default jump motion is 0.42D
+				double maxJump = 0.42D * 3 - 0.42D; // Addition of default jump distance
+				double val = maxJump * (level / 100f);
+				event.getEntity().motionY += val;
 				event.getEntity().velocityChanged = true;
 				addProgression(1);
-				System.out.println("entityJump called."); // This is a helpful debug tool for now.
+				System.out.println("entityJump called. " + val); // This is a helpful debug tool for now.
 				break;
 			}
 		}
@@ -104,6 +107,7 @@ public class Powers
 			{
 			case 0:
 				
+				// The point of this is because the other power might also have a speed boost, but there should not be more than 2 speed boosts.
 				AttributeModifier POWER_1_SPEED_BOOST = (new AttributeModifier(POWER_1_SPEED_BOOST_ID, "Power 1 speedboost", level / 100D, 2)).setSaved(false);
 				AttributeModifier POWER_2_SPEED_BOOST = (new AttributeModifier(POWER_2_SPEED_BOOST_ID, "Power 2 speedboost", level / 100D, 2)).setSaved(false);
 				IAttributeInstance iattributeinstance = event.player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
@@ -163,6 +167,8 @@ public class Powers
 		 */
 		public void checkProgression()
 		{
+			boolean progressed = false;
+			
 			if(tickVal - lastTick < 10)
 				return;
 			lastTick = tickVal;
@@ -174,10 +180,22 @@ public class Powers
 				{
 					setLevel(getLevel() + 1);
 					setProgression(0);
-					System.out.println("Power " + getID() + " has progressed to " + getLevel());
+					progressed = true;
 				}
 				break;
-			}			
+			case 1:
+				if(getProgression() > POWER_1_PROGRESSION)
+				{
+					setLevel(getLevel() + 1);
+					setProgression(0);
+					progressed = true;
+				}
+			}
+			if(progressed)
+			{
+				
+				System.out.println("Power " + getID() + " has progressed to " + getLevel());
+			}
 		}
 		
 		

@@ -15,6 +15,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 
 public class SimplyPowersCommand extends CommandBase
 {
@@ -34,7 +35,7 @@ public class SimplyPowersCommand extends CommandBase
 
 	@Override
 	public String getCommandUsage(ICommandSender sender) {
-		return "/simplypowers [list, regen]";
+		return "/simplypowers [list, regen, setpower, setlevel]";
 	}
 	@Override
     @Nonnull
@@ -47,7 +48,13 @@ public class SimplyPowersCommand extends CommandBase
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
 	{
 		if(sender instanceof EntityPlayer)
-		{				
+		{
+			if(args.length == 0)
+			{
+				sender.addChatMessage(new TextComponentString(getCommandUsage(sender)));
+				return;
+			}
+			
 			IPowerData powerData = ((EntityPlayer) sender).getCapability(PowerDataProvider.POWER_CAP, null);
 			if(args[0].equalsIgnoreCase("list"))
 			{
@@ -58,6 +65,41 @@ public class SimplyPowersCommand extends CommandBase
 				powerData.generatePowers();
 				sender.addChatMessage(new TextComponentString("Power regenerated."));
 				sender.addChatMessage(new TextComponentString("Power debug: " + powerData.toString()));
+			}
+			else if(args[0].equalsIgnoreCase("setpower"))
+			{
+				if(args.length == 5)
+				{
+					int power = Integer.parseInt(args[1]);
+					int type = Integer.parseInt(args[2]);
+					int id = Integer.parseInt(args[3]);
+					int level = Integer.parseInt(args[4]);
+					
+					powerData.syncData(); // So we don't lose anything in the other power
+					int other = Math.abs(power-1);
+					
+					int[] types = new int[2];
+					int[] powerIDs = new int[2];
+					int[] levels = new int[2];
+					types[power] = type;
+					types[other] = powerData.getTypes()[other];
+					powerIDs[power] = id;
+					powerIDs[other] = powerData.getPowerIDs()[other];
+					levels[power] = level;
+					levels[other] = powerData.getLevels()[other];
+					
+					powerData.setTypes(types);
+					powerData.setPowerIDs(powerIDs);
+					powerData.setLevels(levels);
+					
+					powerData.genObjects();
+					
+					sender.addChatMessage(new TextComponentString(TextFormatting.GREEN + "Power set."));
+				}
+				else
+				{
+					sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Incorrect number of args. set power[0/1] powerType[0-10], powerID[0-maxCat], powerLevel[20-100]"));
+				}
 			}
 		}
 	}
