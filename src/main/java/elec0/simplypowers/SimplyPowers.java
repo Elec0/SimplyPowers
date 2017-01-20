@@ -5,7 +5,10 @@ import elec0.simplypowers.capabilities.IPowerData;
 import elec0.simplypowers.capabilities.PowerData;
 import elec0.simplypowers.capabilities.PowerDataStorage;
 import elec0.simplypowers.commands.SimplyPowersCommand;
+import elec0.simplypowers.input.InputHandler;
+import elec0.simplypowers.input.KeyBindings;
 import elec0.simplypowers.items.ModItems;
+import elec0.simplypowers.network.PacketHandler;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -62,6 +65,8 @@ public class SimplyPowers
 			ModItems.init();
 			
 			OBJLoader.INSTANCE.addDomain(MODID);
+			// Initialize our packet handler. Make sure the name is 20 characters or less!
+            PacketHandler.registerMessages("simplypowers");
 		}
 		
 		 public void init(FMLInitializationEvent e) 
@@ -69,6 +74,8 @@ public class SimplyPowers
 			 MinecraftForge.EVENT_BUS.register(new EventHandlerCommon());
 			 MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
 			 CapabilityManager.INSTANCE.register(IPowerData.class, new PowerDataStorage(), PowerData.class);
+			 MinecraftForge.EVENT_BUS.register(new InputHandler());
+			 KeyBindings.init();
 			 
 		 }
 
