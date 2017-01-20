@@ -31,4 +31,5 @@ public interface IPowerData
 	
 	public void genObjects();
 	public void generatePowers();
+	public void syncData();
 }

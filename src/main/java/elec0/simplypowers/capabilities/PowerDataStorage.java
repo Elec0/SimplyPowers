@@ -14,6 +14,7 @@ public class PowerDataStorage implements IStorage<IPowerData>
 	public NBTBase writeNBT(Capability<IPowerData> capability, IPowerData instance, EnumFacing side) 
 	{
 		NBTTagCompound ret = new NBTTagCompound();
+		instance.syncData(); // Update PowerData from Power before saving, or new changes will be lost.
 		ret.setIntArray("types", instance.getTypes());
 		ret.setIntArray("levels", instance.getLevels());
 		ret.setIntArray("ids", instance.getPowerIDs());

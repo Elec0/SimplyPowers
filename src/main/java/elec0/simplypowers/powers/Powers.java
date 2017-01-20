@@ -57,15 +57,16 @@ public class Powers
 		// Total number of powers, or IDs, in this type
 		public static final int NUM_IDS = 1;
 		
-		// Non-static fields
+		public static final int POWER_0_PROGRESSION = 100;
 		
+		// Non-static fields		
 		private int ID;
 		private int level; // Percentage 0-100 of power
 		private boolean active; // If the power is on or not. Sometimes doesn't matter. This is easier to have internally as a bool. Saving is easier as an int/byte.
 		private int progression;
 		
-		private BlockPos lastPos; // For use in calculating distance walked. Don't need to save, will lost at most 1 progression point.
-		
+		private BlockPos lastPos; // For use in calculating distance walked. Don't need to save, will lose at most 1 progression point.
+		private long tickVal, lastTick;
 		
 		public Mover()
 		{
@@ -83,12 +84,13 @@ public class Powers
 		@Override
 		public void entityJump(LivingJumpEvent event)
 		{
-			switch(ID)
+			switch(getID())
 			{
 			case 0:
 				int maxJump = 2; // Multiple of default jump distance
-				event.getEntity().motionY *= maxJump * (level / 100);
+				event.getEntity().motionY *= 1 + (maxJump * (level / 100));
 				event.getEntity().velocityChanged = true;
+				addProgression(1);
 				System.out.println("entityJump called."); // This is a helpful debug tool for now.
 				break;
 			}
@@ -98,7 +100,7 @@ public class Powers
 		public void playerLoggedIn(PlayerLoggedInEvent event)
 		{
 			
-			switch(ID)
+			switch(getID())
 			{
 			case 0:
 				
@@ -126,7 +128,10 @@ public class Powers
 		public void playerTick(PlayerTickEvent event)
 		{
 			EntityPlayer player = event.player;
-			switch(ID)
+			++tickVal;
+			checkProgression();
+			
+			switch(getID())
 			{
 			case 0:
 				if(lastPos != null)
@@ -138,7 +143,7 @@ public class Powers
 						double dist = Math.sqrt(Math.pow(lastPos.getX() - player.getPosition().getX(), 2) + Math.pow(lastPos.getZ() - player.getPosition().getZ(), 2));
 						if(dist > 0 && dist < 10) // If they're moving more than 10 blocks a tick something interesting is happening
 						{
-							progression += (int)dist;
+							addProgression((int)dist);
 							lastPos = player.getPosition();
 						}
 					}
@@ -150,6 +155,31 @@ public class Powers
 				break;
 			}
 		}
+		
+		/**
+		 * Use this method to check if the progression level exceeded the level up point.
+		 * If that's the case, increment the power level.
+		 * Check every 10 ticks.
+		 */
+		public void checkProgression()
+		{
+			if(tickVal - lastTick < 10)
+				return;
+			lastTick = tickVal;
+			
+			switch(getID())
+			{
+			case 0:
+				if(getProgression() > POWER_0_PROGRESSION)
+				{
+					setLevel(getLevel() + 1);
+					setProgression(0);
+					System.out.println("Power " + getID() + " has progressed to " + getLevel());
+				}
+				break;
+			}			
+		}
+		
 		
 		@Override
 		/**
@@ -186,6 +216,9 @@ public class Powers
 		@Override
 		public void setProgression(int progression)
 		{this.progression = progression;}
+		@Override
+		public void addProgression(int progression)
+		{this.progression += progression;}
 		@Override
 		public int getProgression()
 		{return progression;}

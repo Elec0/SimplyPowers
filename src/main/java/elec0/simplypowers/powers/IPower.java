@@ -17,12 +17,14 @@ public interface IPower
 	public void playerTick(PlayerTickEvent event);
 	
 	public int activate();
+	public void checkProgression();
 	
 	// Getters/Setters
 	public void setID(int ID);
 	public void setLevel(int level);
 	public void setActive(int active);
 	public void setProgression(int progression);
+	public void addProgression(int progression);
 
 	public int getID();
 	public int getLevel();

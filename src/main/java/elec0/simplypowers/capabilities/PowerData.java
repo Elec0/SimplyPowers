@@ -57,6 +57,23 @@ public class PowerData implements IPowerData
 		genObjects();
 	}
 	
+	
+	@Override
+	/**
+	 * Use this to ensure all data in PowerData is the same as in Power.
+	 * Power makes changes to the power while running.
+	 */
+	public void syncData()
+	{
+		for(int i = 0; i < 2; ++i)
+		{
+			levels[i] = powers[i].getLevel();
+			powerIDs[i] = powers[i].getID();
+			actives[i] = powers[i].getActive();
+			progression[i] = powers[i].getProgression();
+		}
+	}
+	
 	/***
 	 * Method to regenerate the IPower object, since I don't know how to store it in NBT data.
 	 */
@@ -76,17 +93,14 @@ public class PowerData implements IPowerData
 			progression[1] = 0;
 		}
 		
-		powers[0] = Powers.initPower(types[0]);
-		powers[0].setID(powerIDs[0]);
-		powers[0].setLevel(levels[0]);
-		powers[0].setActive(actives[0]);
-		powers[0].setProgression(progression[0]);
-		powers[1] = Powers.initPower(types[1]);
-		powers[1].setID(powerIDs[1]);
-		powers[1].setLevel(levels[1]);
-		powers[1].setActive(actives[1]);
-		powers[1].setProgression(progression[1]);
-		
+		for(int i = 0; i < 2; ++i)
+		{
+			powers[i] = Powers.initPower(types[i]);
+			powers[i].setID(powerIDs[i]);
+			powers[i].setLevel(levels[i]);
+			powers[i].setActive(actives[i]);
+			powers[i].setProgression(progression[i]);
+		}		
 	}
 	
 	@Override
