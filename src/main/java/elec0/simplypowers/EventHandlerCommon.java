@@ -54,10 +54,7 @@ public class EventHandlerCommon
 		{
 			if(event.getEntity() != null && !event.getEntity().worldObj.isRemote)
 			{
-				// Default walkspeed is 0.1
-				EntityPlayer player = (EntityPlayer)event.getEntity();
-				System.out.println(player.motionX + ", " + player.motionZ);
-				
+								
 			}
 		}*/
 	}
@@ -65,10 +62,20 @@ public class EventHandlerCommon
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent event)
 	{
-		/*if(!event.player.worldObj.isRemote)
+		if(event.player != null && !event.player.worldObj.isRemote)
 		{
-			 
-		}*/
+			IPowerData powerData = event.player.getCapability(PowerDataProvider.POWER_CAP, null);
+			IPower[] powers = powerData.getPowers();
+			if(powers[0] != null && powers[1] != null)
+			{
+				powers[0].playerTick(event);
+				powers[1].playerTick(event);
+			}
+			else
+			{
+				System.err.println("onPlayerTick: Powers 0 or 1 are null. This shouldn't happen.");
+			}
+		}
 	}
 	
 	@SubscribeEvent

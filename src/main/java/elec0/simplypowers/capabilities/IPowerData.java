@@ -18,12 +18,16 @@ public interface IPowerData
 	// Which powers are active
 	public void setActives(int primary, int secondary);
 	public void setActives(int[] actives);
+	// Progression of powers
+	public void setProgression(int primary, int secondary);
+	public void setProgression(int[] progression);
 
 	public int[] getTypes();
 	public IPower[] getPowers();
 	public int[] getPowerIDs();
 	public int[] getLevels();
 	public int[] getActives();
+	public int[] getProgression();
 	
 	public void genObjects();
 	public void generatePowers();

@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class PowerData implements IPowerData
 {
-	private int[] types, levels, powerIDs, actives;
+	private int[] types, levels, powerIDs, actives, progression;
 	private IPower[] powers;
 	
 	public PowerData()
@@ -18,6 +18,7 @@ public class PowerData implements IPowerData
 		levels = new int[2];
 		powerIDs = new int[2];
 		actives = new int[2];
+		progression = new int[2];
 		powers = new IPower[2];
 		generatePowers();
 	}
@@ -43,6 +44,9 @@ public class PowerData implements IPowerData
 		setPowerIDs(rand.nextInt(Powers.getMaxIDs(types[0])), rand.nextInt(Powers.getMaxIDs(types[1])));
 		// Random level between min and max for power to start
 		setLevels(rand.nextInt(Powers.NUM_MAX_GEN_POWER - Powers.NUM_MIN_GEN_POWER) + Powers.NUM_MIN_GEN_POWER, rand.nextInt(Powers.NUM_MAX_GEN_POWER - Powers.NUM_MIN_GEN_POWER) + Powers.NUM_MIN_GEN_POWER);
+		
+		progression[0] = 0;
+		progression[1] = 0;
 		
 		genObjects();
 	}
@@ -130,10 +134,23 @@ public class PowerData implements IPowerData
 	public int[] getActives()
 	{return actives;}
 	
+	@Override
+	public void setProgression(int primary, int secondary)
+	{progression = new int[]{primary, secondary};}
+	
+	@Override
+	public void setProgression(int[] progression)
+	{this.progression = progression;}
+	
+	@Override
+	public int[] getProgression()
+	{return progression;}
+	
 	public String toString()
 	{
 		String ret = "types: " + types[0] + ", " + types[1] + " powersIDs: " + powerIDs[0] + ", " + powerIDs[1] + " levels: " + levels[0] + ", " + levels[1];
 		ret += "\nPowers: 0: " + powers[0].toString() + ", 1: " + powers[1].toString();
+		ret += "\nProgression: " + powers[0].getProgression() + ", " + powers[1].getProgression();
 		return ret;
 	}
 	
@@ -153,6 +170,7 @@ public class PowerData implements IPowerData
 		newData.setPowers(origData.getPowers());
 		newData.setLevels(origData.getLevels());
 		newData.setActives(origData.getActives());
+		newData.setProgression(origData.getProgression());
 		
 		newData.genObjects();
 	}

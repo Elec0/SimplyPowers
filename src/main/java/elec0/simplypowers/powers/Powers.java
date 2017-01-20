@@ -6,8 +6,10 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 public class Powers 
 {
@@ -60,6 +62,9 @@ public class Powers
 		private int ID;
 		private int level; // Percentage 0-100 of power
 		private int active; // If the power is on or not. Sometimes doesn't matter
+		private int progression;
+		
+		private BlockPos lastPos; // For use in calculating distance walked. Don't need to save, will lost at most 1 progression point.
 		
 		
 		public Mover()
@@ -67,6 +72,7 @@ public class Powers
 			ID = 0;
 			level = 0;
 			active = 0;
+			progression = 0;
 		}
 		public Mover(int ID, int level)
 		{
@@ -75,12 +81,12 @@ public class Powers
 		}
 		
 		@Override
-		public void entityJump(LivingJumpEvent event) 
+		public void entityJump(LivingJumpEvent event)
 		{
 			switch(ID)
 			{
 			case 0:
-				event.getEntity().motionY *= 1;
+				event.getEntity().motionY *= 2;
 				event.getEntity().velocityChanged = true;
 				System.out.println("entityJump called.");
 				break;
@@ -102,15 +108,45 @@ public class Powers
 		        if (iattributeinstance.getModifier(POWER_1_SPEED_BOOST_ID) == null)
 		        {
 		        	iattributeinstance.applyModifier(POWER_1_SPEED_BOOST);
-		        	
 		        }
-		        
-		        if (iattributeinstance.getModifier(POWER_2_SPEED_BOOST_ID) == null)
+		        else
 		        {
-		        	iattributeinstance.applyModifier(POWER_2_SPEED_BOOST);
+			        if (iattributeinstance.getModifier(POWER_2_SPEED_BOOST_ID) == null)
+			        {
+			        	iattributeinstance.applyModifier(POWER_2_SPEED_BOOST);
+			        }
 		        }
 		        
 		        break;
+			}
+		}
+		
+		@Override
+		public void playerTick(PlayerTickEvent event)
+		{
+			EntityPlayer player = event.player;
+			switch(ID)
+			{
+			case 0:
+				if(lastPos != null)
+				{
+					// If the player has moved blocks
+					if(!lastPos.equals(player.getPosition()))
+					{
+						// Get horizontal distance only. Falling or jumping shouldn't apply to progression for super speed
+						double dist = Math.sqrt(Math.pow(lastPos.getX() - player.getPosition().getX(), 2) + Math.pow(lastPos.getZ() - player.getPosition().getZ(), 2));
+						if(dist > 0 && dist < 10)
+						{
+							progression += (int)dist;
+							lastPos = player.getPosition();
+						}
+					}
+				}
+				else // lastPos is null
+				{
+					lastPos = event.player.getPosition();
+				}
+				break;
 			}
 		}
 		
@@ -141,6 +177,12 @@ public class Powers
 		@Override
 		public int getActive()
 		{return active;}
+		@Override
+		public void setProgression(int progression)
+		{this.progression = progression;}
+		@Override
+		public int getProgression()
+		{return progression;}
 		
 		public String toString()
 		{
