@@ -37,12 +37,6 @@ public class EventHandlerCommon
 			{
 				System.err.println("onLivingJumpEvent: Powers 0 or 1 are null. This shouldn't happen.");
 			}
-			
-			/*double addY = 1.0D; // whatever value you want
-			// player.setVelocity(player.motionX, player.motionY + addY, player.motionZ);
-			// player.addVelocity(0.0D, addY, 0.0D);
-			event.getEntity().motionY += addY;
-			event.getEntity().velocityChanged = true;*/
 		}
 	}
 	
@@ -86,7 +80,6 @@ public class EventHandlerCommon
 		if(player.worldObj.isRemote) // Only server, apparently
 			return;
 		IPowerData powerData = player.getCapability(PowerDataProvider.POWER_CAP, null);
-		player.addChatMessage(new TextComponentString("Power debug: " + powerData.toString()));
 		
 		IPower[] powers = powerData.getPowers();
 		if(powers[0] != null && powers[1] != null)

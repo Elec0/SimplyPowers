@@ -16,7 +16,7 @@ public interface IPower
 	public void playerLoggedIn(PlayerLoggedInEvent event);
 	public void playerTick(PlayerTickEvent event);
 	
-	public void activate();
+	public int activate();
 	
 	// Getters/Setters
 	public void setID(int ID);

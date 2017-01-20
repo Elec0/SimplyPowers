@@ -61,7 +61,7 @@ public class Powers
 		
 		private int ID;
 		private int level; // Percentage 0-100 of power
-		private int active; // If the power is on or not. Sometimes doesn't matter
+		private boolean active; // If the power is on or not. Sometimes doesn't matter. This is easier to have internally as a bool. Saving is easier as an int/byte.
 		private int progression;
 		
 		private BlockPos lastPos; // For use in calculating distance walked. Don't need to save, will lost at most 1 progression point.
@@ -71,7 +71,7 @@ public class Powers
 		{
 			ID = 0;
 			level = 0;
-			active = 0;
+			active = false;
 			progression = 0;
 		}
 		public Mover(int ID, int level)
@@ -86,9 +86,10 @@ public class Powers
 			switch(ID)
 			{
 			case 0:
-				event.getEntity().motionY *= 2;
+				int maxJump = 2; // Multiple of default jump distance
+				event.getEntity().motionY *= maxJump * (level / 100);
 				event.getEntity().velocityChanged = true;
-				System.out.println("entityJump called.");
+				System.out.println("entityJump called."); // This is a helpful debug tool for now.
 				break;
 			}
 		}
@@ -135,7 +136,7 @@ public class Powers
 					{
 						// Get horizontal distance only. Falling or jumping shouldn't apply to progression for super speed
 						double dist = Math.sqrt(Math.pow(lastPos.getX() - player.getPosition().getX(), 2) + Math.pow(lastPos.getZ() - player.getPosition().getZ(), 2));
-						if(dist > 0 && dist < 10)
+						if(dist > 0 && dist < 10) // If they're moving more than 10 blocks a tick something interesting is happening
 						{
 							progression += (int)dist;
 							lastPos = player.getPosition();
@@ -151,12 +152,17 @@ public class Powers
 		}
 		
 		@Override
-		public void activate()
+		/**
+		 * Toggle active status
+		 * @returns new status
+		 */
+		public int activate()
 		{
-			if(active == 0)
-				active = 1;
+			if(active == false)
+				active = true;
 			else
-				active = 0;
+				active = false;
+			return (active ? 1: 0);
 		}
 
 		@Override
@@ -173,10 +179,10 @@ public class Powers
 		{return level;}
 		@Override
 		public void setActive(int active)
-		{this.active = active;}
+		{this.active = (active == 1 ? true : false);}
 		@Override
 		public int getActive()
-		{return active;}
+		{return (active ? 1 : 0);}
 		@Override
 		public void setProgression(int progression)
 		{this.progression = progression;}

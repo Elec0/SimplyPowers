@@ -36,6 +36,10 @@ public class PowerData implements IPowerData
 		 * Actives: 0/1
 		 * 		If the power is activated or not. It might not be possible
 		 * 		to activate the power, in which case the value doesn't matter.
+		 * 
+		 * Progression: 0-maxInt
+		 * 		This is how we're keeping track of when to level a power up by a percent point.
+		 * 		Once the progression value gets above a certain level, increment the level.
 		 */
 		
 		Random rand = new Random();
@@ -45,6 +49,8 @@ public class PowerData implements IPowerData
 		// Random level between min and max for power to start
 		setLevels(rand.nextInt(Powers.NUM_MAX_GEN_POWER - Powers.NUM_MIN_GEN_POWER) + Powers.NUM_MIN_GEN_POWER, rand.nextInt(Powers.NUM_MAX_GEN_POWER - Powers.NUM_MIN_GEN_POWER) + Powers.NUM_MIN_GEN_POWER);
 		
+		actives[0] = 0;
+		actives[0] = 0; 
 		progression[0] = 0;
 		progression[1] = 0;
 		
@@ -63,15 +69,24 @@ public class PowerData implements IPowerData
 			actives[0] = 0;
 			actives[1] = 0;
 		}
+		if(progression.length <= 0)
+		{
+			progression = new int[2];
+			progression[0] = 0;
+			progression[1] = 0;
+		}
 		
 		powers[0] = Powers.initPower(types[0]);
 		powers[0].setID(powerIDs[0]);
 		powers[0].setLevel(levels[0]);
 		powers[0].setActive(actives[0]);
+		powers[0].setProgression(progression[0]);
 		powers[1] = Powers.initPower(types[1]);
 		powers[1].setID(powerIDs[1]);
 		powers[1].setLevel(levels[1]);
 		powers[1].setActive(actives[1]);
+		powers[1].setProgression(progression[1]);
+		
 	}
 	
 	@Override
