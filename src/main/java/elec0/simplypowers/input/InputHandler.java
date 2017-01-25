@@ -12,7 +12,11 @@ public class InputHandler
 	{
 		if(KeyBindings.powerKey1.isPressed())
 		{
-			PacketHandler.INSTANCE.sendToServer(new PacketSendKey());
+			PacketHandler.INSTANCE.sendToServer(new PacketSendKey(1));
+		}
+		if(KeyBindings.powerKey2.isPressed())
+		{
+			PacketHandler.INSTANCE.sendToServer(new PacketSendKey(2));
 		}
 	}
 }

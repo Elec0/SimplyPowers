@@ -64,7 +64,9 @@ public class Powers
 		private int ID;
 		private int level; // Percentage 0-100 of power
 		private boolean active; // If the power is on or not. Sometimes doesn't matter. This is easier to have internally as a bool. Saving is easier as an int/byte.
+		private boolean prevActive; // The previous value of active last tick. Isn't saved.
 		private int progression;
+		private int[] data; // Power-specific data storage
 		
 		private BlockPos lastPos; // For use in calculating distance walked. Don't need to save, will lose at most 1 progression point.
 		private long tickVal, lastTick;
@@ -85,6 +87,9 @@ public class Powers
 		@Override
 		public void entityJump(LivingJumpEvent event)
 		{
+			if(!active)
+				return;
+			
 			switch(getID())
 			{
 			case 1:
@@ -106,25 +111,54 @@ public class Powers
 			switch(getID())
 			{
 			case 0:
-				
-				// The point of this is because the other power might also have a speed boost, but there should not be more than 2 speed boosts.
-				AttributeModifier POWER_1_SPEED_BOOST = (new AttributeModifier(POWER_1_SPEED_BOOST_ID, "Power 1 speedboost", level / 100D, 2)).setSaved(false);
-				AttributeModifier POWER_2_SPEED_BOOST = (new AttributeModifier(POWER_2_SPEED_BOOST_ID, "Power 2 speedboost", level / 100D, 2)).setSaved(false);
-				IAttributeInstance iattributeinstance = event.player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
-
+				applySpeedBoost(active, event.player);
+		        
+		        break;
+			}
+		}
+		
+		private void applySpeedBoost(boolean apply, EntityPlayer player)
+		{
+			// I don't like this. It should be able to be defined elsewhere, but I need access to the AttributeModifiers in other methods than just
+			// 		the playerLoggedIn. Might need to add another switch case in here for modifying the power formulas.
+			//		If so, remove the switch from playerLoggedIn and just call this method to handle it.
+			
+			// The point of this is because the other power might also have a speed boost, but there should not be more than 2 speed boosts.
+			AttributeModifier power1Speed = (new AttributeModifier(POWER_1_SPEED_BOOST_ID, "Power 1 speedboost", level / 100D, 2)).setSaved(false);
+			AttributeModifier power2Speed = (new AttributeModifier(POWER_2_SPEED_BOOST_ID, "Power 2 speedboost", level / 100D, 2)).setSaved(false);
+			IAttributeInstance iattributeinstance = player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+			
+			if(apply)
+			{
+				// If the boost isn't active, apply it. 
+				// If another power activates a speed boost first then activate the second ID for this one
 		        if (iattributeinstance.getModifier(POWER_1_SPEED_BOOST_ID) == null)
 		        {
-		        	iattributeinstance.applyModifier(POWER_1_SPEED_BOOST);
+		        	iattributeinstance.applyModifier(power1Speed);
 		        }
 		        else
 		        {
 			        if (iattributeinstance.getModifier(POWER_2_SPEED_BOOST_ID) == null)
 			        {
-			        	iattributeinstance.applyModifier(POWER_2_SPEED_BOOST);
+			        	iattributeinstance.applyModifier(power2Speed);
 			        }
 		        }
-		        
-		        break;
+			}
+			else
+			{
+				// This..is probably not a good idea, because it will always disable the first boost no matter which power is deactivated
+				// This needs to be rethought. For now it will work.
+				if (iattributeinstance.getModifier(POWER_1_SPEED_BOOST_ID) != null)
+		        {
+		        	iattributeinstance.removeModifier(power1Speed);
+		        }
+		        else
+		        {
+			        if (iattributeinstance.getModifier(POWER_2_SPEED_BOOST_ID) != null)
+			        {
+			        	iattributeinstance.removeModifier(power2Speed);
+			        }
+		        }
 			}
 		}
 		
@@ -138,6 +172,11 @@ public class Powers
 			switch(getID())
 			{
 			case 0:
+				if(prevActive != active)
+				{
+					applySpeedBoost(active, player);
+				}
+				
 				if(lastPos != null)
 				{
 					// If the player has moved blocks
@@ -158,6 +197,7 @@ public class Powers
 				}
 				break;
 			}
+			prevActive = active;
 		}
 		
 		/**
@@ -207,9 +247,14 @@ public class Powers
 		public int activate()
 		{
 			if(active == false)
+			{
 				active = true;
+			}
 			else
+			{
 				active = false;
+			}
+			System.out.println("Power " + ID + " active: " + active);
 			return (active ? 1: 0);
 		}
 
@@ -240,10 +285,16 @@ public class Powers
 		@Override
 		public int getProgression()
 		{return progression;}
+		@Override
+		public void setData(int[] data)
+		{this.data = data;}
+		@Override
+		public int[] getData()
+		{return data;}
 		
 		public String toString()
 		{
-			return "ID: " + ID + ", level: " + level;
+			return "ID: " + ID + ", level: " + level + ", active: " + active;
 		}
 	}
 	

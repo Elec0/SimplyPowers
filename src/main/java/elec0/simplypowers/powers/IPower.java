@@ -25,9 +25,11 @@ public interface IPower
 	public void setActive(int active);
 	public void setProgression(int progression);
 	public void addProgression(int progression);
+	public void setData(int[] data);
 
 	public int getID();
 	public int getLevel();
 	public int getActive();
 	public int getProgression();
+	public int[] getData();
 }

@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 public class PowerData implements IPowerData
 {
 	private int[] types, levels, powerIDs, actives, progression;
+	private int[][] data;
 	private IPower[] powers;
 	
 	public PowerData()
@@ -20,6 +21,7 @@ public class PowerData implements IPowerData
 		actives = new int[2];
 		progression = new int[2];
 		powers = new IPower[2];
+		data = new int[2][];
 		generatePowers();
 	}
 	
@@ -71,6 +73,7 @@ public class PowerData implements IPowerData
 			powerIDs[i] = powers[i].getID();
 			actives[i] = powers[i].getActive();
 			progression[i] = powers[i].getProgression();
+			data[i] = powers[i].getData();
 		}
 	}
 	
@@ -92,6 +95,10 @@ public class PowerData implements IPowerData
 			progression[0] = 0;
 			progression[1] = 0;
 		}
+		if(data.length <= 0)
+		{
+			data = new int[2][];
+		}
 		
 		for(int i = 0; i < 2; ++i)
 		{
@@ -100,6 +107,7 @@ public class PowerData implements IPowerData
 			powers[i].setLevel(levels[i]);
 			powers[i].setActive(actives[i]);
 			powers[i].setProgression(progression[i]);
+			powers[i].setData(data[i]);
 		}		
 	}
 	
@@ -175,6 +183,18 @@ public class PowerData implements IPowerData
 	public int[] getProgression()
 	{return progression;}
 	
+	@Override
+	public void setData(int[] primary, int[] secondary)
+	{this.data = new int[][]{primary, secondary};}
+	
+	@Override
+	public void setData(int[][] data)
+	{this.data = data;}
+	
+	@Override
+	public int[][] getData()
+	{return data;}
+	
 	public String toString()
 	{
 		String ret = "types: " + types[0] + ", " + types[1] + " powersIDs: " + powerIDs[0] + ", " + powerIDs[1] + " levels: " + levels[0] + ", " + levels[1];
@@ -200,6 +220,7 @@ public class PowerData implements IPowerData
 		newData.setLevels(origData.getLevels());
 		newData.setActives(origData.getActives());
 		newData.setProgression(origData.getProgression());
+		newData.setData(origData.getData());
 		
 		newData.genObjects();
 	}

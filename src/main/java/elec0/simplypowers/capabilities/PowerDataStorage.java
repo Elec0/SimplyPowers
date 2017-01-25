@@ -1,5 +1,7 @@
 package elec0.simplypowers.capabilities;
 
+import java.util.Arrays;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,6 +22,11 @@ public class PowerDataStorage implements IStorage<IPowerData>
 		ret.setIntArray("ids", instance.getPowerIDs());
 		ret.setIntArray("actives", instance.getActives());
 		ret.setIntArray("progression", instance.getProgression());
+		// Multidimensional array, so save it as 'data0','data1', etc. Should only really be 0 and 1
+		for(int i = 0; i < instance.getData().length; ++i)
+		{
+			ret.setIntArray("data" + i, instance.getData()[i]);
+		}
 		
 		return ret;
 	}
@@ -36,6 +43,14 @@ public class PowerDataStorage implements IStorage<IPowerData>
 			instance.setPowerIDs(tag.getIntArray("ids"));
 			instance.setActives(tag.getIntArray("actives"));
 			instance.setProgression(tag.getIntArray("progression"));
+			int size = 0;
+			int[][] data = new int[2][];
+			for(int i = 0; i < 2; ++i) // 20 is arbitrary, is entirely large enough
+			{
+				
+				data[i] = tag.getIntArray("data" + i);					
+			}
+			instance.setData(data);
 			
 			instance.genObjects();
 		}
