@@ -18,6 +18,8 @@ public class Powers
 	public static final int NUM_MAX_GEN_POWER = 80; // Maximum strength a power can be at generation
 	public static final int NUM_MAX_POWER = 100; // Absolute maximum power strength
 	
+	public static final int NUM_DATA_MAX = 10;
+	
 	private static final UUID POWER_1_SPEED_BOOST_ID = UUID.fromString("61b127a6-db97-11e6-bf26-cec0c932ce01");
 	private static final UUID POWER_2_SPEED_BOOST_ID = UUID.fromString("61b12c56-db97-11e6-bf26-cec0c932ce01");
 	
@@ -57,6 +59,7 @@ public class Powers
 		// Total number of powers, or IDs, in this type
 		public static final int NUM_IDS = 2;
 		
+		// Power progressions required to level up, as it were
 		public static final int POWER_0_PROGRESSION = 100;
 		public static final int POWER_1_PROGRESSION = 10;
 		
@@ -80,6 +83,7 @@ public class Powers
 		}
 		public Mover(int ID, int level)
 		{
+			this();
 			this.ID = ID;
 			this.level = level;
 		}
@@ -100,6 +104,7 @@ public class Powers
 				event.getEntity().velocityChanged = true;
 				addProgression(1);
 				System.out.println("entityJump called. " + val); // This is a helpful debug tool for now.
+				System.out.println(((EntityPlayer)event.getEntity()).capabilities.allowFlying);
 				break;
 			}
 		}
@@ -196,6 +201,13 @@ public class Powers
 					lastPos = event.player.getPosition();
 				}
 				break;
+			case 1:
+				if(prevActive != active)
+				{
+					player.capabilities.allowFlying = active;
+					player.sendPlayerAbilities();
+				}
+				break;
 			}
 			prevActive = active;
 		}
@@ -254,7 +266,6 @@ public class Powers
 			{
 				active = false;
 			}
-			System.out.println("Power " + ID + " active: " + active);
 			return (active ? 1: 0);
 		}
 

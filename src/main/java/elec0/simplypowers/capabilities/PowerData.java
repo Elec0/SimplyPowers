@@ -21,7 +21,7 @@ public class PowerData implements IPowerData
 		actives = new int[2];
 		progression = new int[2];
 		powers = new IPower[2];
-		data = new int[2][];
+		data = new int[2][Powers.NUM_DATA_MAX];
 		generatePowers();
 	}
 	
@@ -45,6 +45,7 @@ public class PowerData implements IPowerData
 		 */
 		
 		Random rand = new Random();
+		
 		setTypes(rand.nextInt(Powers.NUM_TYPES), rand.nextInt(Powers.NUM_TYPES));
 		// Set power IDs to random value between 0 and maximum power ID for that given power type
 		setPowerIDs(rand.nextInt(Powers.getMaxIDs(types[0])), rand.nextInt(Powers.getMaxIDs(types[1])));
@@ -97,7 +98,7 @@ public class PowerData implements IPowerData
 		}
 		if(data.length <= 0)
 		{
-			data = new int[2][];
+			data = new int[2][Powers.NUM_DATA_MAX];
 		}
 		
 		for(int i = 0; i < 2; ++i)
