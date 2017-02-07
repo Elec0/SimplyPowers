@@ -1,5 +1,6 @@
 package elec0.simplypowers.capabilities;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import elec0.simplypowers.powers.IPower;
@@ -11,6 +12,7 @@ public class PowerData implements IPowerData
 	private int[] types, levels, powerIDs, actives, progression;
 	private int[][] data;
 	private IPower[] powers;
+	private ArrayList<Integer> keysPressed;
 	
 	public PowerData()
 	{
@@ -22,6 +24,7 @@ public class PowerData implements IPowerData
 		progression = new int[2];
 		powers = new IPower[2];
 		data = new int[2][Powers.NUM_DATA_MAX];
+		keysPressed = new ArrayList();
 		generatePowers();
 	}
 	
@@ -110,6 +113,32 @@ public class PowerData implements IPowerData
 			powers[i].setProgression(progression[i]);
 			powers[i].setData(data[i]);
 		}		
+	}
+	
+	/**
+	 * Used to update the status of keys being held down from client.
+	 * @param keyCode
+	 * @param isPressed
+	 */
+	@Override
+	public void keyStatus(int keyCode, boolean isPressed)
+	{
+		// If the arraylist has the key and it's no longer pressed, remove it from the list
+		// else, if it is pressed, add it to the list
+		if(keysPressed.contains(keyCode))
+		{
+			if(!isPressed)
+				keysPressed.remove((Integer)keyCode);
+		}
+		else
+		{
+			if(isPressed)
+				keysPressed.add(keyCode);
+		}
+		// Give powers the data, but keep this method's code unique
+		powers[0].setKeyStatus(keysPressed);
+		powers[1].setKeyStatus(keysPressed);
+
 	}
 	
 	@Override

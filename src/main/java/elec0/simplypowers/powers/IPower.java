@@ -1,5 +1,7 @@
 package elec0.simplypowers.powers;
 
+import java.util.List;
+
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
@@ -9,7 +11,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
  * Contains methods to be called on the stored <code>power</code> variable in <code>PowerData</code> for elegance.
  * @author Elec0
  */
-public interface IPower 
+public interface IPower
 {
 	// Event methods
 	public void entityJump(LivingJumpEvent event);
@@ -26,6 +28,7 @@ public interface IPower
 	public void setProgression(int progression);
 	public void addProgression(int progression);
 	public void setData(int[] data);
+	public void setKeyStatus(List<Integer> keysPressed);
 
 	public int getID();
 	public int getLevel();

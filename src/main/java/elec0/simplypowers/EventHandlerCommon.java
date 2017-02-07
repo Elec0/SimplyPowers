@@ -5,7 +5,10 @@ import java.util.UUID;
 import elec0.simplypowers.capabilities.IPowerData;
 import elec0.simplypowers.capabilities.PowerData;
 import elec0.simplypowers.capabilities.PowerDataProvider;
+import elec0.simplypowers.network.PacketHandler;
+import elec0.simplypowers.network.PacketSendKeyHold;
 import elec0.simplypowers.powers.IPower;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -53,6 +56,7 @@ public class EventHandlerCommon
 		}*/
 	}
     
+	private boolean jumpPressed;
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent event)
 	{
@@ -68,6 +72,30 @@ public class EventHandlerCommon
 			else
 			{
 				System.err.println("onPlayerTick: Powers 0 or 1 are null. This shouldn't happen.");
+			}
+		}
+		// Running this on the client
+		else if(event.player != null && event.player.worldObj.isRemote)
+		{
+			
+			if(Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown())
+			{
+				// Only update if jump wasn't pressed last tick
+				if(jumpPressed == false)
+				{
+					jumpPressed = true;
+					PacketHandler.INSTANCE.sendToServer(new PacketSendKeyHold(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode(), jumpPressed));
+				}
+				
+			}
+			else
+			{
+				// Only update if jump was pressed last tick
+				if(jumpPressed == true)
+				{
+					jumpPressed = false;
+					PacketHandler.INSTANCE.sendToServer(new PacketSendKeyHold(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode(), jumpPressed));
+				}
 			}
 		}
 	}

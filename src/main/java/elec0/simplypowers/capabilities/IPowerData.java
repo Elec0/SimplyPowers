@@ -36,4 +36,5 @@ public interface IPowerData
 	public void genObjects();
 	public void generatePowers();
 	public void syncData();
+	public void keyStatus(int keyCode, boolean isPressed);
 }
