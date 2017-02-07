@@ -5,6 +5,7 @@ import java.util.UUID;
 import elec0.simplypowers.capabilities.IPowerData;
 import elec0.simplypowers.capabilities.PowerData;
 import elec0.simplypowers.capabilities.PowerDataProvider;
+import elec0.simplypowers.input.KeyBindings;
 import elec0.simplypowers.network.PacketHandler;
 import elec0.simplypowers.network.PacketSendKeyHold;
 import elec0.simplypowers.powers.IPower;
@@ -56,7 +57,7 @@ public class EventHandlerCommon
 		}*/
 	}
     
-	private boolean jumpPressed;
+	private boolean jumpPressed, power1Pressed, power2Pressed;
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent event)
 	{
@@ -76,27 +77,46 @@ public class EventHandlerCommon
 		}
 		// Running this on the client
 		else if(event.player != null && event.player.worldObj.isRemote)
-		{
-			
-			if(Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown())
-			{
+		{	
+			if(Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown()){
 				// Only update if jump wasn't pressed last tick
-				if(jumpPressed == false)
-				{
+				if(!jumpPressed){
 					jumpPressed = true;
 					PacketHandler.INSTANCE.sendToServer(new PacketSendKeyHold(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode(), jumpPressed));
 				}
-				
 			}
-			else
-			{
-				// Only update if jump was pressed last tick
-				if(jumpPressed == true)
-				{
+			else{
+				if(jumpPressed){
 					jumpPressed = false;
 					PacketHandler.INSTANCE.sendToServer(new PacketSendKeyHold(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode(), jumpPressed));
 				}
 			}
+			// Do the same thing for power key 1 and 2.
+			if(KeyBindings.powerKey1.isKeyDown()){
+				if(!power1Pressed){
+					power1Pressed = true;
+					PacketHandler.INSTANCE.sendToServer(new PacketSendKeyHold(KeyBindings.powerKey1.getKeyCode(), power1Pressed));
+				}
+			}
+			else{
+				if(power1Pressed){
+					power1Pressed = false;
+					PacketHandler.INSTANCE.sendToServer(new PacketSendKeyHold(KeyBindings.powerKey1.getKeyCode(), power1Pressed));
+				}
+			}
+			if(KeyBindings.powerKey2.isKeyDown()){
+				if(!power2Pressed){
+					power2Pressed = true;
+					PacketHandler.INSTANCE.sendToServer(new PacketSendKeyHold(KeyBindings.powerKey2.getKeyCode(), power2Pressed));
+				}
+			}
+			else{
+				if(power2Pressed){
+					power2Pressed = false;
+					PacketHandler.INSTANCE.sendToServer(new PacketSendKeyHold(KeyBindings.powerKey2.getKeyCode(), power2Pressed));
+				}
+			}
+			
 		}
 	}
 	
