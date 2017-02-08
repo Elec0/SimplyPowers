@@ -1,7 +1,5 @@
 package elec0.simplypowers;
 
-import java.util.UUID;
-
 import elec0.simplypowers.capabilities.IPowerData;
 import elec0.simplypowers.capabilities.PowerData;
 import elec0.simplypowers.capabilities.PowerDataProvider;
@@ -10,14 +8,11 @@ import elec0.simplypowers.network.PacketHandler;
 import elec0.simplypowers.network.PacketSendKeyHold;
 import elec0.simplypowers.powers.IPower;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -138,6 +133,30 @@ public class EventHandlerCommon
 		else
 		{
 			System.err.println("onPlayerLogsIn: Powers 0 or 1 are null. This shouldn't happen.");
+		}
+	}
+	
+	@SubscribeEvent
+	public void onPlayerFalls(LivingFallEvent event)
+	{
+		if(event.getEntity() instanceof EntityPlayer)
+		{
+			EntityPlayer player = (EntityPlayer)event.getEntity();
+			
+			if(player.worldObj.isRemote)
+				return;
+			IPowerData powerData = player.getCapability(PowerDataProvider.POWER_CAP, null);
+			
+			IPower[] powers = powerData.getPowers();
+			if(powers[0] != null && powers[1] != null)
+			{
+				powers[0].playerFalls(event);
+				powers[1].playerFalls(event);
+			}
+			else
+			{
+				System.err.println("onPlayerFalls: Powers 0 or 1 are null. This shouldn't happen.");
+			}
 		}
 	}
 	

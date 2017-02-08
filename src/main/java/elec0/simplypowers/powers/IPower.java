@@ -3,6 +3,7 @@ package elec0.simplypowers.powers;
 import java.util.List;
 
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
@@ -17,6 +18,7 @@ public interface IPower
 	public void entityJump(LivingJumpEvent event);
 	public void playerLoggedIn(PlayerLoggedInEvent event);
 	public void playerTick(PlayerTickEvent event);
+	public void playerFalls(LivingFallEvent event);
 	
 	public int activate();
 	public void checkProgression();

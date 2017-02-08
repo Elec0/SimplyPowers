@@ -10,6 +10,7 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
@@ -174,7 +175,7 @@ public class Mover implements IPower
 				}
 			}
 			if(active)
-			{
+			{		        
 				if(keysPressed.contains(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode()))
 				{
 					// Hover or fall slowly
@@ -183,7 +184,8 @@ public class Mover implements IPower
 					// In other words, don't prevent jumping
 					if(player.motionY < 0)
 					{
-						player.motionY = 0;
+						double motionVal = 5D / (5D*level); // This could probably use some refinement
+						player.motionY = -motionVal;
 						player.velocityChanged = true;
 					}
 				}
@@ -191,6 +193,34 @@ public class Mover implements IPower
 			break;
 		}
 		prevActive = active;
+	}
+	
+	@Override
+	public void playerFalls(LivingFallEvent event)
+	{
+		if(!active)
+			return;
+		
+		EntityPlayer player = (EntityPlayer)event.getEntity();
+		
+		switch(getID())
+		{
+		case 0:
+			break;
+		case 1:
+			// Deal with negating fall damage from extra jump boost
+			// This must be the same formula in entityJump
+			double maxJump = 0.42D * 3 - 0.42D;
+			double val = maxJump * (level / 100f);
+			double blocksJumped = (val/0.0784D) - 0.5D;
+			
+			if(player.fallDistance < blocksJumped)
+			{
+				// Say we handled the event
+				event.setCanceled(true);
+			}
+			break;
+		}
 	}
 	
 	/**
