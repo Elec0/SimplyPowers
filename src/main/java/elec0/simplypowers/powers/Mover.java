@@ -9,6 +9,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -17,7 +18,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 public class Mover implements IPower
 {
 	// Total number of powers, or IDs, in this type
-	public static final int NUM_IDS = 2;
+	public static final int NUM_IDS = 3;
 	
 	// Power progressions required to level up, as it were
 	public static final int POWER_0_PROGRESSION = 100;
@@ -270,7 +271,7 @@ public class Mover implements IPower
 	 * Toggle active status
 	 * @returns new status
 	 */
-	public int activate()
+	public int activate(EntityPlayer player)
 	{
 		if(active == false)
 		{
@@ -279,6 +280,19 @@ public class Mover implements IPower
 		else
 		{
 			active = false;
+		}
+		
+		switch(getID())
+		{
+		case 2:
+			RayTraceResult res = player.rayTrace(level, 0);
+			
+			if(res.typeOfHit == RayTraceResult.Type.BLOCK)
+			{
+				player.moveToBlockPosAndAngles(res.getBlockPos(), 0, 0);  // doesn't work
+				System.out.println("Moved to " + res.getBlockPos().toString());
+			}
+			break;
 		}
 		return (active ? 1: 0);
 	}

@@ -74,7 +74,7 @@ public class PacketSendKey implements IMessage
             if(powers[0] != null && powers[1] != null)
             {
             	// Toggle power activate status
-            	powers[message.powerNum].activate(); 
+            	powers[message.powerNum].activate(playerEntity); 
             }
             
             Block block = world.getBlockState(message.blockPos).getBlock();
