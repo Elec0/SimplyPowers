@@ -29,7 +29,7 @@ public class Mover implements IPower
 	private int level; // Percentage 0-100 of power
 	private boolean active; // If the power is on or not. Sometimes doesn't matter. This is easier to have internally as a bool. Saving is easier as an int/byte.
 	private boolean prevActive; // The previous value of active last tick. Isn't saved.
-	private int progression;
+	private int progression, progressionLvl;
 	private int[] data; // Power-specific data storage
 	private List<Integer> keysPressed;
 	
@@ -86,7 +86,7 @@ public class Mover implements IPower
 	
 	private void applySpeedBoost(boolean apply, EntityPlayer player)
 	{
-		// I don't like this. It should be able to be defined elsewhere, but I need access to the AttributeModifiers in other methods than just
+		// TODO: I don't like this. It should be able to be defined elsewhere, but I need access to the AttributeModifiers in other methods than just
 		// 		the playerLoggedIn. Might need to add another switch case in here for modifying the power formulas.
 		//		If so, remove the switch from playerLoggedIn and just call this method to handle it.
 		
@@ -151,7 +151,7 @@ public class Mover implements IPower
 				{
 					// Get horizontal distance only. Falling or jumping shouldn't apply to progression for super speed
 					double dist = Math.sqrt(Math.pow(lastPos.getX() - player.getPosition().getX(), 2) + Math.pow(lastPos.getZ() - player.getPosition().getZ(), 2));
-					if(dist > 0 && dist < 10) // If they're moving more than 10 blocks a tick something interesting is happening
+					if(dist > 0 && dist < 10) // If they're moving more than 10 blocks a tick something interesting is happening, like teleportation
 					{
 						addProgression((int)dist);
 						lastPos = player.getPosition();
@@ -185,7 +185,7 @@ public class Mover implements IPower
 					// In other words, don't prevent jumping
 					if(player.motionY < 0)
 					{
-						double motionVal = 5D / (5D*level); // This could probably use some refinement
+						double motionVal = 5D / (5D*level); // TODO: This could probably use some refinement
 						player.motionY = -motionVal;
 						player.velocityChanged = true;
 					}
@@ -240,27 +240,11 @@ public class Mover implements IPower
 
 		boolean progressed = false;
 		
-		switch(getID())
+		if(getProgression() > getProgressionLevel())
 		{
-		case 0:
-			if(getProgression() > POWER_0_PROGRESSION)
-			{
-				setLevel(getLevel() + 1);
-				setProgression(0);
-				progressed = true;
-			}
-			break;
-		case 1:
-			if(getProgression() > POWER_1_PROGRESSION)
-			{
-				setLevel(getLevel() + 1);
-				setProgression(0);
-				progressed = true;
-			}
-		}
-		if(progressed)
-		{
-			
+			setLevel(getLevel() + 1);
+			setProgression(0);
+			progressed = true;
 			System.out.println("Power " + getID() + " has progressed to " + getLevel());
 		}
 	}
@@ -285,12 +269,17 @@ public class Mover implements IPower
 		switch(getID())
 		{
 		case 2:
-			RayTraceResult res = player.rayTrace(level, 0);
+			active = false; // This power is instant-use
+			double dist = level; // Amount in blocks possible to teleport. Should be refined.
+			RayTraceResult res = player.rayTrace(dist, 0);
 			
 			if(res.typeOfHit == RayTraceResult.Type.BLOCK)
 			{
-				player.moveToBlockPosAndAngles(res.getBlockPos(), 0, 0);  // doesn't work
-				System.out.println("Moved to " + res.getBlockPos().toString());
+				player.setPositionAndUpdate(res.getBlockPos().getX() + 0.5D, res.getBlockPos().getY() + 1, res.getBlockPos().getZ() + 0.5D);
+				player.motionX = 0;
+				player.motionY = 0;
+				player.motionZ = 0;
+				player.fallDistance = 0; // In case you're teleporting as you fall, if the motion is cancelled then the fall dist should too
 			}
 			break;
 		}
@@ -324,6 +313,12 @@ public class Mover implements IPower
 	@Override
 	public int getProgression()
 	{return progression;}
+	@Override
+	public void setProgressionLevel(int progressionLvl)
+	{this.progressionLvl = progressionLvl;}
+	@Override
+	public int getProgressionLevel()
+	{return progressionLvl;}
 	@Override
 	public void setData(int[] data)
 	{this.data = data;}

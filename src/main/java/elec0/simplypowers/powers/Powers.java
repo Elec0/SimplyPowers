@@ -26,6 +26,11 @@ public class Powers
 	public static final UUID POWER_1_SPEED_BOOST_ID = UUID.fromString("61b127a6-db97-11e6-bf26-cec0c932ce01");
 	public static final UUID POWER_2_SPEED_BOOST_ID = UUID.fromString("61b12c56-db97-11e6-bf26-cec0c932ce01");
 	
+	public static final int[][] PROGRESSION_LEVEL_BASE = new int[][] {
+												{100, 10}			// 0: Mover
+												
+												};
+	
 	public static String[] NAME_TYPES = new String[] {"Mover", "Shaker", "Brute", "Breaker", "Master", "Blaster", "Thinker", "Striker", "Changer", "Trump", "Stranger"};
 	
 	/***

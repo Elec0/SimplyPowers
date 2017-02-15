@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class PowerData implements IPowerData
 {
-	private int[] types, levels, powerIDs, actives, progression;
+	private int[] types, levels, powerIDs, actives, progression, progressionLvl;
 	private int[][] data;
 	private IPower[] powers;
 	private ArrayList<Integer> keysPressed;
@@ -22,6 +22,7 @@ public class PowerData implements IPowerData
 		powerIDs = new int[2];
 		actives = new int[2];
 		progression = new int[2];
+		progressionLvl = new int[2];
 		powers = new IPower[2];
 		data = new int[2][Powers.NUM_DATA_MAX];
 		keysPressed = new ArrayList();
@@ -45,21 +46,40 @@ public class PowerData implements IPowerData
 		 * Progression: 0-maxInt
 		 * 		This is how we're keeping track of when to level a power up by a percent point.
 		 * 		Once the progression value gets above a certain level, increment the level.
+		 * 
+		 * Progression level: 1-maxInt
+		 * 		The threshold a progression must pass to increase in power.
+		 * 		Base values are defined in Powers.PROGRESSION_LEVEL_BASE in a 2D array
 		 */
 		
 		Random rand = new Random();
 		
-		setTypes(rand.nextInt(Powers.NUM_TYPES), rand.nextInt(Powers.NUM_TYPES));
+		int type1 = rand.nextInt(Powers.NUM_TYPES);
+		int type2 = rand.nextInt(Powers.NUM_TYPES);
+		setTypes(type1, type2);
+		
 		// Set power IDs to random value between 0 and maximum power ID for that given power type
-		setPowerIDs(rand.nextInt(Powers.getMaxIDs(types[0])), rand.nextInt(Powers.getMaxIDs(types[1])));
+		int ID1 = rand.nextInt(Powers.getMaxIDs(types[0]));
+		int ID2 = rand.nextInt(Powers.getMaxIDs(types[1]));
+		setPowerIDs(ID1, ID2);
+		
 		// Random level between min and max for power to start
-		setLevels(rand.nextInt(Powers.NUM_MAX_GEN_POWER - Powers.NUM_MIN_GEN_POWER) + Powers.NUM_MIN_GEN_POWER, rand.nextInt(Powers.NUM_MAX_GEN_POWER - Powers.NUM_MIN_GEN_POWER) + Powers.NUM_MIN_GEN_POWER);
+		int power1 = rand.nextInt(Powers.NUM_MAX_GEN_POWER - Powers.NUM_MIN_GEN_POWER) + Powers.NUM_MIN_GEN_POWER;
+		int power2 = rand.nextInt(Powers.NUM_MAX_GEN_POWER - Powers.NUM_MIN_GEN_POWER) + Powers.NUM_MIN_GEN_POWER;
+		setLevels(power1, power2);
+		
+		// Progression level requirements
+		int progLvl1 = Powers.PROGRESSION_LEVEL_BASE[type1][ID1];
+		int progLvl2 = Powers.PROGRESSION_LEVEL_BASE[type2][ID2];
+		setProgressionLevel(progLvl1, progLvl2);
+		
 		
 		actives[0] = 0;
 		actives[0] = 0; 
 		progression[0] = 0;
 		progression[1] = 0;
-		
+		progressionLvl[0] = 1;
+		progressionLvl[0] = 1;
 		genObjects();
 	}
 	
@@ -77,6 +97,7 @@ public class PowerData implements IPowerData
 			powerIDs[i] = powers[i].getID();
 			actives[i] = powers[i].getActive();
 			progression[i] = powers[i].getProgression();
+			progressionLvl[i] = powers[i].getProgressionLevel();
 			data[i] = powers[i].getData();
 		}
 	}
@@ -99,6 +120,12 @@ public class PowerData implements IPowerData
 			progression[0] = 0;
 			progression[1] = 0;
 		}
+		if(progressionLvl.length <= 0)
+		{
+			progressionLvl = new int[2];
+			progressionLvl[0] = 1;
+			progressionLvl[1] = 1;
+		}
 		if(data.length <= 0)
 		{
 			data = new int[2][Powers.NUM_DATA_MAX];
@@ -111,6 +138,7 @@ public class PowerData implements IPowerData
 			powers[i].setLevel(levels[i]);
 			powers[i].setActive(actives[i]);
 			powers[i].setProgression(progression[i]);
+			powers[i].setProgressionLevel(progressionLvl[i]);
 			powers[i].setData(data[i]);
 		}		
 	}
@@ -214,6 +242,18 @@ public class PowerData implements IPowerData
 	{return progression;}
 	
 	@Override
+	public void setProgressionLevel(int primary, int secondary)
+	{progressionLvl = new int[]{primary, secondary};}
+	
+	@Override
+	public void setProgressionLevel(int[] progressionLvl)
+	{this.progressionLvl = progressionLvl;}
+	
+	@Override
+	public int[] getProgressionLevel()
+	{return progressionLvl;}
+	
+	@Override
 	public void setData(int[] primary, int[] secondary)
 	{this.data = new int[][]{primary, secondary};}
 	
@@ -229,7 +269,7 @@ public class PowerData implements IPowerData
 	{
 		String ret = "types: " + types[0] + ", " + types[1] + " powersIDs: " + powerIDs[0] + ", " + powerIDs[1] + " levels: " + levels[0] + ", " + levels[1];
 		ret += "\nPowers: 0: " + powers[0].toString() + ", 1: " + powers[1].toString();
-		ret += "\nProgression: " + powers[0].getProgression() + ", " + powers[1].getProgression();
+		ret += "\nProgression: " + powers[0].getProgression() + "/" + powers[0].getProgressionLevel() + ", " + powers[1].getProgression() + "/" + powers[1].getProgressionLevel();
 		return ret;
 	}
 	
@@ -250,6 +290,7 @@ public class PowerData implements IPowerData
 		newData.setLevels(origData.getLevels());
 		newData.setActives(origData.getActives());
 		newData.setProgression(origData.getProgression());
+		newData.setProgressionLevel(origData.getProgressionLevel());
 		newData.setData(origData.getData());
 		
 		newData.genObjects();

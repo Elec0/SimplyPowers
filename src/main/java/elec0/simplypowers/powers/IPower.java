@@ -30,6 +30,7 @@ public interface IPower
 	public void setActive(int active);
 	public void setProgression(int progression);
 	public void addProgression(int progression);
+	public void setProgressionLevel(int progressionLvl);
 	public void setData(int[] data);
 	public void setKeyStatus(List<Integer> keysPressed);
 
@@ -37,5 +38,6 @@ public interface IPower
 	public int getLevel();
 	public int getActive();
 	public int getProgression();
+	public int getProgressionLevel();
 	public int[] getData();
 }

@@ -21,6 +21,8 @@ public interface IPowerData
 	// Progression of powers
 	public void setProgression(int primary, int secondary);
 	public void setProgression(int[] progression);
+	public void setProgressionLevel(int primary, int secondary);
+	public void setProgressionLevel(int[] progressionLvl);
 	// Power-specific data
 	public void setData(int[] primary, int[] secondary);
 	public void setData(int[][] data);
@@ -31,6 +33,7 @@ public interface IPowerData
 	public int[] getLevels();
 	public int[] getActives();
 	public int[] getProgression();
+	public int[] getProgressionLevel();
 	public int[][] getData();
 	
 	public void genObjects();
