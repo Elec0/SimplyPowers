@@ -35,7 +35,7 @@ public class SimplyPowersCommand extends CommandBase
 
 	@Override
 	public String getCommandUsage(ICommandSender sender) {
-		return "/simplypowers [list, regen, setpower, setlevel]";
+		return "/simplypowers [list, regen, setpower, setlevel, setprogression]";
 	}
 	@Override
     @Nonnull
@@ -78,15 +78,15 @@ public class SimplyPowersCommand extends CommandBase
 					powerData.syncData(); // So we don't lose anything in the other power
 					int other = Math.abs(power-1);
 					
-					int[] types = new int[2];
-					int[] powerIDs = new int[2];
-					int[] levels = new int[2];
+					int[] types = powerData.getTypes();
+					int[] powerIDs = powerData.getPowerIDs();
+					int[] levels = powerData.getLevels();
 					types[power] = type;
-					types[other] = powerData.getTypes()[other];
+					//types[other] = powerData.getTypes()[other];
 					powerIDs[power] = id;
-					powerIDs[other] = powerData.getPowerIDs()[other];
+					//powerIDs[other] = powerData.getPowerIDs()[other];
 					levels[power] = level;
-					levels[other] = powerData.getLevels()[other];
+					//levels[other] = powerData.getLevels()[other];
 					
 					powerData.setTypes(types);
 					powerData.setPowerIDs(powerIDs);
@@ -98,7 +98,34 @@ public class SimplyPowersCommand extends CommandBase
 				}
 				else
 				{
-					sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Incorrect number of args. set power[0/1] powerType[0-10], powerID[0-maxCat], powerLevel[20-100]"));
+					sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Incorrect number of args. set power[0/1] powerType[0-10], powerID[0-maxCat], powerLevel[20-100])"));
+				}
+			}
+			else if(args[0].equalsIgnoreCase("setprogression"))
+			{
+				if(args.length == 4)
+				{
+					int power = Integer.parseInt(args[1]);
+					int progression = Integer.parseInt(args[2]);
+					int progressionLvl = Integer.parseInt(args[3]);
+					
+					powerData.syncData();
+
+					int[] progs = powerData.getProgression();
+					int[] progLvls = powerData.getProgressionLevel();
+					progs[power] = progression;
+					progLvls[power] = progressionLvl;
+					
+					powerData.setProgression(progs);
+					powerData.setProgressionLevel(progLvls);
+					
+					powerData.genObjects();
+					
+					sender.addChatMessage(new TextComponentString(TextFormatting.GREEN + "Progression set."));
+				}
+				else
+				{
+					sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Incorrect number of args. (power[0/1] progression[0-maxInt] progressionLvl[1-maxInt]"));
 				}
 			}
 		}

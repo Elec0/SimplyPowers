@@ -123,8 +123,8 @@ public class PowerData implements IPowerData
 		if(progressionLvl.length <= 0)
 		{
 			progressionLvl = new int[2];
-			progressionLvl[0] = 1;
-			progressionLvl[1] = 1;
+			progressionLvl[0] = Powers.PROGRESSION_LEVEL_BASE[types[0]][powerIDs[0]];
+			progressionLvl[1] = Powers.PROGRESSION_LEVEL_BASE[types[1]][powerIDs[1]];
 		}
 		if(data.length <= 0)
 		{
@@ -267,9 +267,9 @@ public class PowerData implements IPowerData
 	
 	public String toString()
 	{
-		String ret = "types: " + types[0] + ", " + types[1] + " powersIDs: " + powerIDs[0] + ", " + powerIDs[1] + " levels: " + levels[0] + ", " + levels[1];
-		ret += "\nPowers: 0: " + powers[0].toString() + ", 1: " + powers[1].toString();
-		ret += "\nProgression: " + powers[0].getProgression() + "/" + powers[0].getProgressionLevel() + ", " + powers[1].getProgression() + "/" + powers[1].getProgressionLevel();
+		String ret = "types: [" + types[0] + ", " + types[1] + "]: [" + Powers.NAME_TYPES[types[0]] + ", " + Powers.NAME_TYPES[types[1]] + "]";
+		ret += "\nPowers: 0: [" + powers[0].toString() + "], 1: [" + powers[1].toString() + "]";
+		ret += "\nProgression: [" + powers[0].getProgression() + "/" + powers[0].getProgressionLevel() + "], [" + powers[1].getProgression() + "/" + powers[1].getProgressionLevel() + "]";
 		return ret;
 	}
 	

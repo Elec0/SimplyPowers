@@ -231,21 +231,18 @@ public class Mover implements IPower
 	 */
 	public void checkProgression()
 	{		
-		// Don't calculate progression if the power isn't active
-		if(!active)
-			return;
 		if(tickVal - lastTick < 10)
 			return;
 		lastTick = tickVal;
 
-		boolean progressed = false;
-		
-		if(getProgression() > getProgressionLevel())
+		if(getProgression() > getProgressionLevel()) // If we have passed progression level threshold
 		{
-			setLevel(getLevel() + 1);
+			if(getLevel() <= Powers.NUM_MAX_POWER) // Ensure the power level doesn't go over max
+			{
+				setLevel(getLevel() + 1);
+				System.out.println("Power " + getID() + " has progressed to " + getLevel());
+			}
 			setProgression(0);
-			progressed = true;
-			System.out.println("Power " + getID() + " has progressed to " + getLevel());
 		}
 	}
 	
@@ -280,6 +277,8 @@ public class Mover implements IPower
 				player.motionY = 0;
 				player.motionZ = 0;
 				player.fallDistance = 0; // In case you're teleporting as you fall, if the motion is cancelled then the fall dist should too
+				
+				checkProgression();
 			}
 			break;
 		}
