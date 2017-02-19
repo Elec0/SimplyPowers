@@ -10,6 +10,8 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -204,9 +206,15 @@ public class Mover implements IPower
 				{
 					if(tickVal - tickPressed > 20) // 1s
 					{
-						
-						System.out.println("Do a thing on held.");
-						
+						int index = 0; // In case we need to change this to make room for other things
+						if(data[index+3] == player.dimension)
+						{
+							player.setPositionAndUpdate(data[index]+ 0.5D, data[index+1], data[index+2] + 0.5D);
+						}
+						else
+						{
+							player.addChatMessage(new TextComponentString(TextFormatting.RED + "You can't recall to a dimension that isn't your current one."));
+						}
 						heldActivated = true;
 					}
 				}
@@ -293,6 +301,19 @@ public class Mover implements IPower
 		{
 		case 2:
 			active = false; // This power is instant-use
+			
+			// If the player has the ability to mark/recall, and is sneaking, mark.
+			if(player.isSneaking() && getLevel() > 20)
+			{
+				int startIndex = 0;
+				data[startIndex] = player.getPosition().getX();
+				data[startIndex+1] = player.getPosition().getY();
+				data[startIndex+2] = player.getPosition().getZ();
+				data[startIndex+3] = player.dimension;
+				player.addChatMessage(new TextComponentString(TextFormatting.GOLD + "Mark position set."));
+				break;
+			}
+			
 			double dist = level; // Amount in blocks possible to teleport. TODO: Should be refined.
 			RayTraceResult res = player.rayTrace(dist, 0);
 			
