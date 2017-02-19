@@ -130,6 +130,12 @@ public class PowerData implements IPowerData
 		{
 			data = new int[2][Powers.NUM_DATA_MAX];
 		}
+		else if(data[0].length == 0)
+		{
+			data[0] = new int[Powers.NUM_DATA_MAX];
+			data[1] = new int[Powers.NUM_DATA_MAX];
+
+		}
 		
 		for(int i = 0; i < 2; ++i)
 		{

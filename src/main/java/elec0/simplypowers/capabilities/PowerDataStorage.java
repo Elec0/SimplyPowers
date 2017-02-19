@@ -25,7 +25,7 @@ public class PowerDataStorage implements IStorage<IPowerData>
 		ret.setIntArray("progressionlvl", instance.getProgressionLevel());
 		
 		// Multidimensional array, so save it as 'data0','data1', etc. Should only really be 0 and 1
-		for(int i = 0; i < instance.getData().length; ++i)
+		for(int i = 0; i < 2; ++i)
 		{
 			ret.setIntArray("data" + i, instance.getData()[i]);
 		}
@@ -50,8 +50,7 @@ public class PowerDataStorage implements IStorage<IPowerData>
 			int[][] data = new int[2][];
 			for(int i = 0; i < 2; ++i)
 			{
-				
-				data[i] = tag.getIntArray("data" + i);					
+				data[i] = tag.getIntArray("data" + i);
 			}
 			instance.setData(data);
 			
