@@ -163,6 +163,7 @@ public class PowerData implements IPowerData
 			if(isPressed)
 				keysPressed.add(keyCode);
 		}
+		
 		// Give powers the data, but keep this method's code unique
 		powers[0].setKeyStatus(keysPressed);
 		powers[1].setKeyStatus(keysPressed);

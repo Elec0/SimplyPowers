@@ -21,7 +21,7 @@ public interface IPower
 	public void playerTick(PlayerTickEvent event);
 	public void playerFalls(LivingFallEvent event);
 	
-	public int activate(EntityPlayer player);
+	public int activate(EntityPlayer player, int keyCode);
 	public void checkProgression();
 	
 	// Getters/Setters

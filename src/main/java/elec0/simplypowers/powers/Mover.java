@@ -32,6 +32,9 @@ public class Mover implements IPower
 	private int progression, progressionLvl;
 	private int[] data; // Power-specific data storage
 	private List<Integer> keysPressed;
+	private int keyCode; // The keycode for the key associated with this power
+	private long tickPressed; // Time when key was pressed. Used for delayed abilities
+	private boolean heldActivated; // When holding a key, if this is true only do the thing once.
 	
 	private BlockPos lastPos; // For use in calculating distance walked. Don't need to save, will lose at most 1 progression point.
 	private long tickVal, lastTick;
@@ -133,12 +136,12 @@ public class Mover implements IPower
 	public void playerTick(PlayerTickEvent event)
 	{
 		EntityPlayer player = event.player;
-		++tickVal;
+		++tickVal; // For once actually doing addition this way might actually matter.
 		checkProgression();
 		
 		switch(getID())
 		{
-		case 0:
+		case 0: // Speed
 			if(prevActive != active)
 			{
 				applySpeedBoost(active, player);
@@ -163,7 +166,7 @@ public class Mover implements IPower
 				lastPos = event.player.getPosition();
 			}
 			break;
-		case 1:
+		case 1: // Jump/Flight
 			if(prevActive != active)
 			{
 				if(progression > 50) // If power has progressed enough to allow flight TODO: Change.
@@ -192,6 +195,28 @@ public class Mover implements IPower
 				}
 			}
 			break;
+			
+		case 2: // Teleportation
+			// If holding power key down for certain time, recall
+			if(keysPressed.contains(keyCode))
+			{
+				if(!heldActivated)
+				{
+					if(tickVal - tickPressed > 20) // 1s
+					{
+						
+						System.out.println("Do a thing on held.");
+						
+						heldActivated = true;
+					}
+				}
+			}
+			else if(heldActivated) // If action was performed, and the key is no longer held.
+			{
+				// I think this will actually trigger on any mover power that has a held power. Which might be a problem, but shouldn't be.
+				heldActivated = false;
+			}
+			break;
 		}
 		prevActive = active;
 	}
@@ -206,8 +231,6 @@ public class Mover implements IPower
 		
 		switch(getID())
 		{
-		case 0:
-			break;
 		case 1:
 			// Deal with negating fall damage from extra jump boost
 			// This must be the same formula in entityJump
@@ -250,9 +273,10 @@ public class Mover implements IPower
 	@Override
 	/**
 	 * Toggle active status
+	 * Is called when the player pushes their power button. Once per press
 	 * @returns new status
 	 */
-	public int activate(EntityPlayer player)
+	public int activate(EntityPlayer player, int keyCode)
 	{
 		if(active == false)
 		{
@@ -262,12 +286,14 @@ public class Mover implements IPower
 		{
 			active = false;
 		}
+		this.keyCode = keyCode;
+		tickPressed = tickVal; // Save when the key was pressed
 		
 		switch(getID())
 		{
 		case 2:
 			active = false; // This power is instant-use
-			double dist = level; // Amount in blocks possible to teleport. Should be refined.
+			double dist = level; // Amount in blocks possible to teleport. TODO: Should be refined.
 			RayTraceResult res = player.rayTrace(dist, 0);
 			
 			if(res.typeOfHit == RayTraceResult.Type.BLOCK)
@@ -282,6 +308,7 @@ public class Mover implements IPower
 			}
 			break;
 		}
+		
 		return (active ? 1: 0);
 	}
 

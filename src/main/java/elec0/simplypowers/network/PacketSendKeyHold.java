@@ -60,6 +60,7 @@ public class PacketSendKeyHold implements IMessage
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             
             IPowerData powerData = playerEntity.getCapability(PowerDataProvider.POWER_CAP, null);
+            
             powerData.keyStatus(message.keyCode, message.isPressed);
         }
     }

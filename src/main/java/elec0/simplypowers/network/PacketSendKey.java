@@ -19,36 +19,31 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class PacketSendKey implements IMessage
 {
-	public BlockPos blockPos;
-	public int powerNum;
+	public int powerNum, keyCode;
 	
 	@Override
 	public void fromBytes(ByteBuf buf)
 	{
 		// Retrieve info from message
 		powerNum = buf.readInt();
-		blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+		keyCode = buf.readInt();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) 
 	{
 		buf.writeInt(powerNum);
-		buf.writeInt(blockPos.getX());
-		buf.writeInt(blockPos.getY());
-		buf.writeInt(blockPos.getZ());
+		buf.writeInt(keyCode);
 	}
 	
 	public PacketSendKey()
 	{
 		
 	}
-	public PacketSendKey(int power)
+	public PacketSendKey(int power, int key)
 	{
 		powerNum = power - 1;
-		// I'm kinda meh on this stuff.
-		RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
-		blockPos = mouseOver.getBlockPos();
+		keyCode = key;
 	}
 	
 	public static class Handler implements IMessageHandler<PacketSendKey, IMessage> 
@@ -74,11 +69,9 @@ public class PacketSendKey implements IMessage
             if(powers[0] != null && powers[1] != null)
             {
             	// Toggle power activate status
-            	powers[message.powerNum].activate(playerEntity); 
+            	powers[message.powerNum].activate(playerEntity, message.keyCode); 
             }
             
-            Block block = world.getBlockState(message.blockPos).getBlock();
-            //playerEntity.addChatMessage(new TextComponentString(TextFormatting.GREEN + "Hit block: " + block.getRegistryName()));
             playerEntity.addChatMessage(new TextComponentString(TextFormatting.GREEN + "Power " + (message.powerNum+1) + " " 
             		+ (powers[message.powerNum].getActive() == 0 ? "off" : "on") + "."));
 
