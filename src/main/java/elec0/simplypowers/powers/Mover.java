@@ -206,6 +206,8 @@ public class Mover implements IPower
 				{
 					if(tickVal - tickPressed > 20) // 1s
 					{
+						if(getLevel() < 20) // This must be the same level as the one in activate
+							break;
 						int index = 0; // In case we need to change this to make room for other things
 						if(data[index+3] == player.dimension)
 						{
@@ -303,7 +305,7 @@ public class Mover implements IPower
 			active = false; // This power is instant-use
 			
 			// If the player has the ability to mark/recall, and is sneaking, mark.
-			if(player.isSneaking() && getLevel() > 20)
+			if(player.isSneaking() && getLevel() > 20) // TODO: Change this and the hold getLevel().
 			{
 				int startIndex = 0;
 				data[startIndex] = player.getPosition().getX();
