@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "axis=z": { "model": "simplypowers:powerportal_ew" },
+        "axis=x": { "model": "simplypowers:powerportal_ns" }
+    }
+}

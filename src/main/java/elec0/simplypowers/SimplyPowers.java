@@ -1,5 +1,6 @@
 package elec0.simplypowers;
 
+import elec0.simplypowers.blocks.ModBlocks;
 import elec0.simplypowers.capabilities.CapabilityHandler;
 import elec0.simplypowers.capabilities.IPowerData;
 import elec0.simplypowers.capabilities.PowerData;
@@ -63,6 +64,7 @@ public class SimplyPowers
 		public void preInit(FMLPreInitializationEvent e)
 		{
 			ModItems.init();
+			ModBlocks.init();
 			
 			OBJLoader.INSTANCE.addDomain(MODID);
 			// Initialize our packet handler. Make sure the name is 20 characters or less!
@@ -74,8 +76,7 @@ public class SimplyPowers
 			 MinecraftForge.EVENT_BUS.register(new EventHandlerCommon());
 			 MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
 			 CapabilityManager.INSTANCE.register(IPowerData.class, new PowerDataStorage(), PowerData.class);
-			 MinecraftForge.EVENT_BUS.register(new InputHandler());
-			 KeyBindings.init();
+
 			 
 		 }
 
@@ -94,6 +95,7 @@ public class SimplyPowers
 			
 			// Init models
 			ModItems.initModels();
+			ModBlocks.initModels();
 		}
 		
 		@Override
@@ -101,7 +103,8 @@ public class SimplyPowers
 		{
 			super.init(e);
 			
-			// Init keybinder here, later
+			MinecraftForge.EVENT_BUS.register(new InputHandler());
+			KeyBindings.init();
 			
 		}
 	}
